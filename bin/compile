@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# 1. Set up Oracle Instant Client version and download URL
+ORACLE_VERSION="23.6"
+ORACLE_BASE_URL="https://download.oracle.com/otn_software/linux/instantclient/"
+INSTALL_DIR="$BUILD_DIR/.heroku/oracle"  # Directory where Instant Client will be installed
+
+echo "Installing Oracle Instant Client..."
+
+# 2. Create install directory
+mkdir -p $INSTALL_DIR
+
+# 3. Download the Oracle Instant Client Basic and SDK packages
+curl -L --cookie "oraclelicense=accept-secure-backup-cookie" "$ORACLE_BASE_URL/$ORACLE_VERSION/instantclient-basic-linuxx64-23.6.0.0.0.zip" -o "$INSTALL_DIR/instantclient.zip"
+curl -L --cookie "oraclelicense=accept-secure-backup-cookie" "$ORACLE_BASE_URL/$ORACLE_VERSION/instantclient-sdk-linuxx64-23.6.0.0.0.zip" -o "$INSTALL_DIR/instantclient_sdk.zip"
+
+# 4. Unzip the downloaded files
+echo "Unzipping Oracle Instant Client files..."
+unzip $INSTALL_DIR/instantclient.zip -d $INSTALL_DIR
+unzip $INSTALL_DIR/instantclient_sdk.zip -d $INSTALL_DIR
+
+# 5. Clean up the zip files
+rm $INSTALL_DIR/instantclient.zip
+rm $INSTALL_DIR/instantclient_sdk.zip
+
+# 6. Set environment variables for Oracle Instant Client
+echo "Setting environment variables for Oracle Instant Client..."
+echo "export LD_LIBRARY_PATH=$INSTALL_DIR/instantclient_23_6:$LD_LIBRARY_PATH" >> $BUILD_DIR/.profile.d/oracle.sh
+
+echo "Oracle Instant Client installation complete!"
